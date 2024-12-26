@@ -16,7 +16,9 @@
             {% for row in results %}
                 <li class="list-group-item">
                     <p><strong>Surah:</strong> {{ row.surah_name }} ({{ row.surah_number }})</p>
+                    <p><strong>Verse:</strong> {{ row.verse_number }}</p>
                     <p><strong>Arabic:</strong> <span class="arabic-text">{{ row.arabic }}</span></p>
+                    <p><strong>Pronunciation:</strong> {{ row.pronunciation }}</p>
                     <p><strong>Translation:</strong> {{ row.translation }}</p>
                 </li>
             {% endfor %}

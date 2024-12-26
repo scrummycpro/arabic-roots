@@ -49,15 +49,18 @@ def generate_phonetic_transliteration(arabic_word):
 # Transliteration map for Romanized Arabic to Arabic
 def transliterate_to_arabic(word):
     transliteration_map = {
-        "3": "ع",
-        "7": "ح",
-        "2": "ء",
-        "gh": "غ",
-        "dh": "ذ",
-        "S": "ص",
-        "D": "ض",
-        "ee": "ي",
-        "ta": "ة",
+        "3": "ع",      # '3' maps to 'ع' (Ayn)
+        "7": "ح",      # '7' maps to 'ح' (Haa)
+        "2": "ء",      # '2' maps to 'ء' (Hamza)
+        "gh": "غ",     # 'gh' maps to 'غ' (Ghayn)
+        "dh": "ذ",     # 'dh' maps to 'ذ' (Thal)
+        "S": "ص",      # 'S' maps to 'ص' (Saad)
+        "D": "ض",      # 'D' maps to 'ض' (Daad)
+        "ee": "ي",     # 'ee' maps to 'ي' (Yaa)
+        "ta": "ت",     # 'ta' maps to 'ت' (Ta)
+        "tha": "ث",    # 'tha' maps to 'ث' (Tha)
+        "ta-marbuta": "ة", # 'ta-marbuta' maps to 'ة' (Taa Marbuta)
+        "ah": "ة",     # 'ah' maps to 'ة' (Taa Marbuta - as 'ah' transliteration)
     }
     for key, value in transliteration_map.items():
         word = word.replace(key, value)
@@ -105,13 +108,28 @@ def search():
         search_term = transliterate_to_arabic(search_term)
 
         # Query Quran database for matches in Arabic text or translation
-        results = query_db("""
-            SELECT verses.text AS arabic, verses.transliteration, verses.translation, 
+        rows = query_db("""
+            SELECT verses.id AS verse_number, verses.text AS arabic, verses.translation, 
                    surahs.name AS surah_name, surahs.id AS surah_number
             FROM verses
             JOIN surahs ON verses.surah_id = surahs.id
             WHERE verses.text LIKE ? OR verses.translation LIKE ?
         """, (f"%{search_term}%", f"%{search_term}%"))
+
+        # Add pronunciation for Arabic verses
+        results = []
+        for row in rows:
+            arabic_text = row["arabic"] if row["arabic"] else ""
+            pronunciation = generate_phonetic_transliteration(arabic_text)
+
+            results.append({
+                "surah_name": row["surah_name"],
+                "surah_number": row["surah_number"],
+                "verse_number": row["verse_number"],
+                "arabic": arabic_text,
+                "translation": row["translation"],
+                "pronunciation": pronunciation
+            })
 
     return render_template("search.html", results=results)
 
