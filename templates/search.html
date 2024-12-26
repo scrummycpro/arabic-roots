@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Search Quran</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="search_term" class="form-label">Search for a Word or Phrase:</label>
+        <input type="text" class="form-control" id="search_term" name="search_term" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+{% if results %}
+    <div class="mt-4">
+        <h3>Results:</h3>
+        <ul class="list-group">
+            {% for row in results %}
+                <li class="list-group-item">
+                    <p><strong>Surah:</strong> {{ row.surah_name }} ({{ row.surah_number }})</p>
+                    <p><strong>Arabic:</strong> <span class="arabic-text">{{ row.arabic }}</span></p>
+                    <p><strong>Translation:</strong> {{ row.translation }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+{% endblock %}

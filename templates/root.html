@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>English to Arabic Dictionary</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="word" class="form-label">Enter an English Word or Romanized Arabic:</label>
+        <input type="text" class="form-control" id="word" name="word" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Translate</button>
+</form>
+
+{% if result %}
+    <div class="mt-4">
+        <h3>Result:</h3>
+        {% if result.error %}
+            <p><strong>Error:</strong> {{ result.error }}</p>
+        {% else %}
+            <p><strong>Input Word:</strong> {{ result.input }}</p>
+            <p><strong>Translated Word (Arabic):</strong> <span class="arabic-text">{{ result.translated_word }}</span></p>
+            <p><strong>Pronunciation:</strong> {{ result.pronunciation }}</p>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}
